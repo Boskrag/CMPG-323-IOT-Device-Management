@@ -28,7 +28,7 @@ namespace DeviceManagement_WebApp.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("DefaultConnection");
+                optionsBuilder.UseSqlServer("Password=s3cur3p@ssw0rd;Persist Security Info=True;User ID=cmpg323_sa;Initial Catalog=ConnectedOffice;Data Source=zaazrcmpg323sqlserver.database.windows.net");
             }
         }
 
