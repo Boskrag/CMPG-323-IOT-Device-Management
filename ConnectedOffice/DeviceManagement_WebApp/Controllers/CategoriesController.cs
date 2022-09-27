@@ -26,8 +26,8 @@ namespace DeviceManagement_WebApp.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var categories = _categoriesRepository.GetAll();
-            return View(categories);
+            var category = _categoriesRepository.GetAll();
+            return View(category);
         }
 
         // GET: Categories/Details/5
@@ -38,8 +38,8 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+            var category = _categoriesRepository.GetById(id)
+;                
             if (category == null)
             {
                 return NotFound();
