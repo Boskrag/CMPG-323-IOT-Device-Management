@@ -26,7 +26,7 @@ namespace DeviceManagement_WebApp.Controllers
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            var devices = _devicesRepository.GetAll();
+            var devices =  _devicesRepository.GetAll();
             return View(devices);
         }
 
@@ -38,7 +38,7 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var device = _devicesRepository.GetById(id);
+            var device = await _devicesRepository.GetById(id);
 
             if (device == null)
             {
@@ -57,15 +57,12 @@ namespace DeviceManagement_WebApp.Controllers
         }
 
         // POST: Devices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DeviceId,DeviceName,CategoryId,ZoneId,Status,IsActive,DateCreated")] Device device)
         {
-            device.DeviceId = Guid.NewGuid();
-            _context.Add(device);
-            await _context.SaveChangesAsync();
+            var devices = await _devicesRepository.Create(device);
             return RedirectToAction(nameof(Index));
 
 
@@ -79,19 +76,19 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Device.FindAsync(id);
+            var device = await _devicesRepository.Edit(id);
+            
             if (device == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", device.CategoryId);
-            ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName", device.ZoneId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
+            ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName");
             return View(device);
         }
 
         // POST: Devices/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("DeviceId,DeviceName,CategoryId,ZoneId,Status,IsActive,DateCreated")] Device device)
@@ -102,8 +99,7 @@ namespace DeviceManagement_WebApp.Controllers
             }
             try
             {
-                _context.Update(device);
-                await _context.SaveChangesAsync();
+               var devices = await _devicesRepository.Edit(id);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -128,10 +124,8 @@ namespace DeviceManagement_WebApp.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Device
-                .Include(d => d.Category)
-                .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+            var device = await _devicesRepository.Delete(id);
+
             if (device == null)
             {
                 return NotFound();
@@ -145,9 +139,8 @@ namespace DeviceManagement_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var device = await _context.Device.FindAsync(id);
-            _context.Device.Remove(device);
-            await _context.SaveChangesAsync();
+            var device = await _devicesRepository.DeleteConfirmed(id);
+            
             return RedirectToAction(nameof(Index));
         }
 

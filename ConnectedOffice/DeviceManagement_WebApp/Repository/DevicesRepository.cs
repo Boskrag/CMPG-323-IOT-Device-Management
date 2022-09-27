@@ -58,6 +58,8 @@ namespace DeviceManagement_WebApp.Repository
         {
 
             var device = await _context.Device.FindAsync(id);
+
+
                
             return (device);
         }
